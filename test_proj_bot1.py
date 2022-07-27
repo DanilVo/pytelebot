@@ -4,16 +4,15 @@ import urllib.parse
 import requests
 from requests import get
 import json
+from dotenv import load_dotenv
+import os
 
-API_KEY_TELE = "5155568476:AAHC3_vVjKjVwzL-zLXejc6SfVVWV1u4_FE"
+def configure():
+    load_dotenv()
 
-API_KEY1_WEATHER = "1353ad9c7af9a94f3f41d52e1c656a22abdba01ba8094ab0cfe3609c7385cc92"
-BASE_URL_WEATHER = "http://api.positionstack.com/v1/"
+configure()
 
-API_KEY_LOCATION = "05fe4fc8294f68ce34f808282d69b31f"
-url_location = "https://api.ambeedata.com/weather/latest/by-lat-lng"
-
-bot = telebot.TeleBot(API_KEY_TELE)
+bot = telebot.TeleBot(os.getenv('API_KEY_TELE'))
 
 @bot.message_handler(commands=['start'])
 def help_start(message):
@@ -32,7 +31,7 @@ def location_name(message):
     global lat,lng
     conn = http.client.HTTPConnection('api.positionstack.com')
     params = urllib.parse.urlencode({
-        'access_key': f'{API_KEY_LOCATION}',
+        'access_key': f'{os.getenv("API_KEY_LOCATION")}',
         'query': f'{message.text}',
         'limit': 1,
         'output': 'json'
@@ -55,11 +54,11 @@ def location_name(message):
 def weather():
     querystring = {"lat": f"{lat}", "lng": f"{lng}"}
     headers = {
-        'x-api-key': f'{API_KEY1_WEATHER}',
+        'x-api-key': f'{os.getenv("API_KEY1_WEATHER")}',
         'Content-type': "application/json"
     }
     response = requests.request(
-        "GET", url_location, headers=headers, params=querystring).json()
+        "GET", os.getenv("url_location"), headers=headers, params=querystring).json()
     res = round(((response['data']['apparentTemperature'])-32)*5/9)
     summary = response['data']['summary']
     return f'{res} celcius, {summary}'
