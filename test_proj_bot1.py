@@ -47,7 +47,7 @@ def location_name(message):
         lng = ajson['data'][0]['longitude']
         country_name = ajson['data'][0]['country']
         print(lat,',',lng)
-        bot.send_message(message.chat.id, f'Weather in {country_name}, {message.text.capitalize()} {weather()} celcius')
+        bot.send_message(message.chat.id, f'Weather in {country_name}, {message.text.capitalize()} {weather()}')
         return lat, lng
     else:
         bot.send_message(message.chat.id, "No such city found!\nTry again /weather")
@@ -61,6 +61,7 @@ def weather():
     response = requests.request(
         "GET", url_location, headers=headers, params=querystring).json()
     res = round(((response['data']['apparentTemperature'])-32)*5/9)
-    return res
+    summary = response['data']['summary']
+    return f'{res} celcius, {summary}'
 
 bot.polling()
