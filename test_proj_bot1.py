@@ -4,8 +4,13 @@ import urllib.parse
 import requests
 from requests import get
 import json
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
+
+BASE_URL_WEATHER = "http://api.positionstack.com/v1/"
+URL_LOCATION = "https://api.ambeedata.com/weather/latest/by-lat-lng"
+
+
 
 def configure():
     load_dotenv()
@@ -54,11 +59,11 @@ def location_name(message):
 def weather():
     querystring = {"lat": f"{lat}", "lng": f"{lng}"}
     headers = {
-        'x-api-key': f'{os.getenv("API_KEY1_WEATHER")}',
+        'x-api-key': f'{os.getenv("API_KEY_WEATHER")}',
         'Content-type': "application/json"
     }
     response = requests.request(
-        "GET", os.getenv("url_location"), headers=headers, params=querystring).json()
+        "GET", URL_LOCATION, headers=headers, params=querystring).json()
     res = round(((response['data']['apparentTemperature'])-32)*5/9)
     summary = response['data']['summary']
     return f'{res} celcius, {summary}'
